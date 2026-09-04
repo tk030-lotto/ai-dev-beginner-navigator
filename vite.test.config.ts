@@ -5,9 +5,9 @@ export default defineConfig({
     outDir: 'dist-test',
     emptyOutDir: true,
     lib: {
-      entry: './tests/core.test.ts',
+      entry: './tests/index.ts',
       formats: ['es'],
-      fileName: 'core.test',
+      fileName: 'suite.test',
     },
   },
 });
