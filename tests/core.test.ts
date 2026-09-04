@@ -8,6 +8,7 @@ import { SearchEngine } from '../src/core/search';
 import { sanitizeInput, detectSecrets } from '../src/core/sanitizer';
 import { LocalStorageHistoryStore } from '../src/core/history';
 import { FavoritesStore } from '../src/core/favorites';
+import { FeedbackStore } from '../src/core/feedback';
 import type { ProblemPlugin } from '../src/types';
 
 function assert(condition: boolean, message: string) {
@@ -178,5 +179,35 @@ assert(favStore.getAll().length === 2, 'Should have 2 items');
 favStore.clear();
 assert(favStore.getAll().length === 0, 'clear should empty all');
 console.log('✓ FavoritesStore test passed.\n');
+
+// 7. FeedbackStore Test
+console.log('7. Testing FeedbackStore...');
+const fbStore = new FeedbackStore('test_feedback_key');
+fbStore.clear();
+assert(Object.keys(fbStore.getAll()).length === 0, 'Initial feedback should be empty');
+assert(fbStore.get('plugin-1') === null, 'Should return null for non-existing feedback');
+
+// 役に立った (helpful = true)
+const fb1 = fbStore.rate('plugin-1', true);
+assert(fb1.helpful === true, 'Rate should record helpful=true');
+assert(fbStore.get('plugin-1')?.helpful === true, 'get should retrieve recorded helpful');
+assert(Object.keys(fbStore.getAll()).length === 1, 'Length should be 1');
+
+// 解決しなかった (helpful = false) で上書き
+const fb2 = fbStore.rate('plugin-1', false);
+assert(fb2.helpful === false, 'Rate overwrite should record helpful=false');
+assert(fbStore.get('plugin-1')?.helpful === false, 'get should return updated helpful=false');
+
+// 削除
+assert(fbStore.remove('plugin-1') === true, 'remove should return true');
+assert(fbStore.get('plugin-1') === null, 'get should return null after removal');
+
+// クリア
+fbStore.rate('p1', true);
+fbStore.rate('p2', false);
+assert(Object.keys(fbStore.getAll()).length === 2, 'Should have 2 items');
+fbStore.clear();
+assert(Object.keys(fbStore.getAll()).length === 0, 'clear should empty all items');
+console.log('✓ FeedbackStore test passed.\n');
 
 console.log('=== All Core Infrastructure Tests Passed Successfully! ===');

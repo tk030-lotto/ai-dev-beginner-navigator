@@ -5,6 +5,7 @@
 
 import { ProblemPlugin } from '../../types';
 import { FavoritesStore } from '../../core/favorites';
+import { FeedbackStore } from '../../core/feedback';
 import { createPromptBox } from './prompt-box';
 import { showToast } from '../utils/toast';
 
@@ -12,13 +13,22 @@ export interface SolutionViewProps {
   plugin: ProblemPlugin;
   relatedPlugins: ProblemPlugin[];
   favoritesStore?: FavoritesStore;
+  feedbackStore?: FeedbackStore;
   onBack: () => void;
   onSelectPlugin: (pluginId: string) => void;
   onPromptGenerated?: (promptText: string) => void;
 }
 
 export function createSolutionView(props: SolutionViewProps): HTMLElement {
-  const { plugin, relatedPlugins, favoritesStore, onBack, onSelectPlugin, onPromptGenerated } = props;
+  const {
+    plugin,
+    relatedPlugins,
+    favoritesStore,
+    feedbackStore,
+    onBack,
+    onSelectPlugin,
+    onPromptGenerated,
+  } = props;
   const { metadata, knowledge, promptTemplates } = plugin;
 
   const container = document.createElement('div');
@@ -218,6 +228,66 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
       listEl.appendChild(btn);
     });
     container.appendChild(section5);
+  }
+
+  // 6段目: フィードバック（役に立った / 解決しなかった）
+  if (feedbackStore) {
+    const feedbackSec = document.createElement('section');
+    feedbackSec.className = 'solution-section feedback-section';
+    feedbackSec.style.textAlign = 'center';
+    feedbackSec.style.padding = '1.5rem 1rem';
+
+    const renderFeedbackButtons = () => {
+      const fb = feedbackStore.get(metadata.id);
+      const helpfulActive = fb?.helpful === true;
+      const unhelpfulActive = fb?.helpful === false;
+
+      feedbackSec.innerHTML = `
+        <div style="font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin-bottom: 0.35rem;">
+          この解決策は役に立ちましたか？
+        </div>
+        <p style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: 1rem;">
+          フィードバックを記録して、今後の開発や改善に役立てます。
+        </p>
+        <div style="display: inline-flex; gap: 0.75rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <button type="button" class="btn btn-sm ${helpfulActive ? 'btn-primary' : 'btn-secondary'}" id="fb-helpful-btn" style="min-width: 130px; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <span>👍</span>
+            <span>${helpfulActive ? '役に立った！' : '役に立った'}</span>
+          </button>
+          <button type="button" class="btn btn-sm ${unhelpfulActive ? 'btn-danger' : 'btn-secondary'}" id="fb-unhelpful-btn" style="min-width: 140px; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <span>👎</span>
+            <span>${unhelpfulActive ? '解決しなかった' : '解決しなかった'}</span>
+          </button>
+        </div>
+        ${fb ? `
+          <div style="margin-top: 0.75rem; font-size: var(--text-xs); color: var(--text-muted);">
+            記録済み（${fb.helpful ? '👍 役に立った' : '👎 解決しなかった'}）
+            <button type="button" class="btn btn-ghost btn-sm" id="fb-clear-btn" style="font-size: 11px; padding: 2px 6px; margin-left: 0.5rem;">取り消す</button>
+          </div>
+        ` : ''}
+      `;
+
+      feedbackSec.querySelector('#fb-helpful-btn')?.addEventListener('click', () => {
+        feedbackStore.rate(metadata.id, true);
+        showToast('フィードバック（役に立った 👍）を記録しました');
+        renderFeedbackButtons();
+      });
+
+      feedbackSec.querySelector('#fb-unhelpful-btn')?.addEventListener('click', () => {
+        feedbackStore.rate(metadata.id, false);
+        showToast('フィードバック（解決しなかった 👎）を記録しました');
+        renderFeedbackButtons();
+      });
+
+      feedbackSec.querySelector('#fb-clear-btn')?.addEventListener('click', () => {
+        feedbackStore.remove(metadata.id);
+        showToast('評価を取り消しました');
+        renderFeedbackButtons();
+      });
+    };
+
+    renderFeedbackButtons();
+    container.appendChild(feedbackSec);
   }
 
   return container;
