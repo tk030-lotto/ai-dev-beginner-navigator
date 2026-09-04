@@ -21,7 +21,7 @@ export const SECRET_PATTERNS: SecretPattern[] = [
   // 2. GitHub Personal Access Token
   {
     name: 'GitHub Token',
-    regex: /\b(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{82}|gho_[a-zA-Z0-9]{36}|ghs_[a-zA-Z0-9]{36})\b/g,
+    regex: /\b(ghp_[a-zA-Z0-9]{20,}|github_pat_[a-zA-Z0-9_]{30,}|gho_[a-zA-Z0-9]{20,}|ghs_[a-zA-Z0-9]{20,})\b/g,
   },
   // 3. AWS Access Key ID & Secret Key
   {

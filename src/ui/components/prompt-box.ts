@@ -107,6 +107,10 @@ export function createPromptBox(props: PromptBoxProps): HTMLElement {
         <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer" class="ai-link-btn">Claude</a>
       </div>
     </div>
+
+    <div class="prompt-security-note" style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;">
+      ※ 本機能は完全な秘密情報検出を保証するものではありません。秘密情報が含まれていないことを確認してからAIへ送信してください。
+    </div>
   `;
 
   const templateSelect = container.querySelector<HTMLSelectElement>('#prompt-template-select')!;
