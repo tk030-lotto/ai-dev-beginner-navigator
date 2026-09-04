@@ -166,6 +166,40 @@
   * `npm run build`: TypeScript Strict Mode型エラー0件、本番ビルド成功
   * `origin/main` へのプッシュ完了
 
+### Phase 8: 実用性・実効性改善（完了）
+* **完了日**: 2026-09-04
+* **コミット**: `0f401a0`
+* **成果物**:
+  * 同義語辞書（`src/core/synonyms.ts`）の初心者語彙大幅拡張（「なんかおかしい」「うまくいかない」「繋がらない」等）
+  * プラグインコンテンツ充実（`err-cause-finder`, `git-concept`, `file-structure` に Claude/Gemini 向け追加テンプレートとStep/Caution増強）
+  * `ツール起動.bat`（Shift-JIS/CP932）のNode.js未導入時公式URL自動展開
+* **検証結果**:
+  * 実効性スコア: 4.0 → 4.5 (+0.5)
+  * 実用性スコア: 3.5 → 3.8 (+0.3)
+  * `npm test`: 全件合格、本番ビルド正常
+
+### Phase 9: 有用性向上改修（完了）
+* **完了日**: 2026-09-04
+* **コミット**: `018441c`, `fd3a64d`, `736dec5`
+* **成果物**:
+  * **お気に入り機能（★ボタン）**:
+    - `src/core/favorites.ts`: `FavoritesStore`（LocalStorage永続化、CRUD・トグル）
+    - `src/ui/components/solution-view.ts`: 解決ビュー右上に★トグルボタン
+    - `src/ui/components/category-tabs.ts`: 「★ お気に入り」タブおよび件数集計
+    - `src/main.ts`: お気に入り絞り込み、空状態ガイダンス
+  * **フィードバック機能（👍/👎ボタン）**:
+    - `src/core/feedback.ts`: `FeedbackStore`（LocalStorage永続化）
+    - `src/ui/components/solution-view.ts`: 6段目に「役に立った / 解決しなかった」フィードバックセクション
+    - `src/ui/components/result-card.ts`: 検索カード上に「👍 解決済」「👎 未解決」バッジ
+  * **プラグイン50件拡充**:
+    - 全20件の新プラグイン追加（React, Python, Docker, VSCode, Git, Web設計）
+    - Error: 5→7件, AI: 10→13件, Git: 6→9件, File: 5→9件, Dev Support: 4→12件（計50件）
+    - `src/plugins/index.ts`, `tests/plugins.test.ts`, `tests/audit.test.ts` を全50件検証に更新
+* **検証結果**:
+  * `npm test`: Core基盤（Favorites, Feedback含む）・全50プラグイン構造・初心者語句50件第1位マッチ・第19章監査15項目 すべて100%合格
+  * `npm run build`: 型エラー0件、本番ビルド成功
+  * `origin/main` へのプッシュ完了
+
 ---
 
 ## 5. 今後の運用予定
