@@ -113,14 +113,20 @@ export function createPromptBox(props: PromptBoxProps): HTMLElement {
     </div>
   `;
 
-  const templateSelect = container.querySelector<HTMLSelectElement>('#prompt-template-select')!;
-  const osSelect = container.querySelector<HTMLSelectElement>('#prompt-os-select')!;
-  const langSelect = container.querySelector<HTMLSelectElement>('#prompt-lang-select')!;
-  const summaryInput = container.querySelector<HTMLInputElement>('#prompt-input-summary')!;
-  const detailInput = container.querySelector<HTMLTextAreaElement>('#prompt-detail-input')!;
-  const previewArea = container.querySelector<HTMLTextAreaElement>('#prompt-preview-area')!;
-  const copyBtn = container.querySelector<HTMLButtonElement>('#prompt-copy-btn')!;
-  const redactAlert = container.querySelector<HTMLElement>('#prompt-redact-alert')!;
+  const templateSelect = container.querySelector<HTMLSelectElement>('#prompt-template-select');
+  const osSelect = container.querySelector<HTMLSelectElement>('#prompt-os-select');
+  const langSelect = container.querySelector<HTMLSelectElement>('#prompt-lang-select');
+  const summaryInput = container.querySelector<HTMLInputElement>('#prompt-input-summary');
+  const detailInput = container.querySelector<HTMLTextAreaElement>('#prompt-detail-input');
+  const previewArea = container.querySelector<HTMLTextAreaElement>('#prompt-preview-area');
+  const copyBtn = container.querySelector<HTMLButtonElement>('#prompt-copy-btn');
+  const redactAlert = container.querySelector<HTMLElement>('#prompt-redact-alert');
+
+  // テンプレート構築失敗を防ぐためのNullチェック
+  if (!templateSelect || !osSelect || !langSelect || !summaryInput || !detailInput || !previewArea || !copyBtn || !redactAlert) {
+    container.innerHTML = '<div class="prompt-error">プロンプト生成エリアの初期化に失敗しました。</div>';
+    return container;
+  }
 
   // プロンプト生成実行
   const updatePrompt = () => {

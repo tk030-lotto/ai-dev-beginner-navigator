@@ -38,10 +38,10 @@ export const SECRET_PATTERNS: SecretPattern[] = [
     name: 'Bearer Token / JWT',
     regex: /\bBearer\s+[a-zA-Z0-9\-._~+/]+=*/gi,
   },
-  // 6. 設定ファイル内のパスワード / シークレット値 (password=xxx, secret=xxx)
+  // 6. 設定ファイル内のパスワード / シークレット値 (password=xxx, secret:xxx, password xxx 等)
   {
     name: 'Password / Secret Value',
-    regex: /(["']?(?:password|secret|api[_-]?key|access[_-]?token)["']?\s*[:=]\s*["'])([^"'\s]{4,})(["'])/gi,
+    regex: /(["']?(?:password|secret|api[_-]?key|access[_-]?token)["']?\s*[:=,]\s*["']?)([^"'\s,;]{4,})(["']?)/gi,
   },
 ];
 
