@@ -4,19 +4,21 @@
  */
 
 import { ProblemPlugin } from '../../types';
+import { FavoritesStore } from '../../core/favorites';
 import { createPromptBox } from './prompt-box';
 import { showToast } from '../utils/toast';
 
 export interface SolutionViewProps {
   plugin: ProblemPlugin;
   relatedPlugins: ProblemPlugin[];
+  favoritesStore?: FavoritesStore;
   onBack: () => void;
   onSelectPlugin: (pluginId: string) => void;
   onPromptGenerated?: (promptText: string) => void;
 }
 
 export function createSolutionView(props: SolutionViewProps): HTMLElement {
-  const { plugin, relatedPlugins, onBack, onSelectPlugin, onPromptGenerated } = props;
+  const { plugin, relatedPlugins, favoritesStore, onBack, onSelectPlugin, onPromptGenerated } = props;
   const { metadata, knowledge, promptTemplates } = plugin;
 
   const container = document.createElement('div');
@@ -38,6 +40,7 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
   container.appendChild(navDiv);
 
   // タイトルヘッダー
+  const isFav = favoritesStore ? favoritesStore.has(metadata.id) : false;
   const headerDiv = document.createElement('div');
   headerDiv.className = 'solution-header';
   headerDiv.innerHTML = `
@@ -48,10 +51,37 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
       <span style="font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono);">
         ${metadata.id}
       </span>
+      ${favoritesStore ? `
+        <button type="button" class="btn btn-sm btn-ghost solution-fav-btn ${isFav ? 'fav-active' : ''}" id="solution-fav-btn" style="margin-left: auto; display: inline-flex; align-items: center; gap: 0.35rem;">
+          <span class="fav-icon" style="color: #f59e0b; font-size: 1rem;">${isFav ? '★' : '☆'}</span>
+          <span class="fav-text" style="font-size: var(--text-xs); font-weight: 500;">${isFav ? 'お気に入り登録中' : 'お気に入りに追加'}</span>
+        </button>
+      ` : ''}
     </div>
     <h1 class="solution-title">${metadata.name}</h1>
     <p class="solution-desc">${metadata.description}</p>
   `;
+
+  if (favoritesStore) {
+    const favBtn = headerDiv.querySelector<HTMLButtonElement>('#solution-fav-btn');
+    if (favBtn) {
+      favBtn.addEventListener('click', () => {
+        const nextState = favoritesStore.toggle(metadata.id);
+        const iconSpan = favBtn.querySelector('.fav-icon');
+        const textSpan = favBtn.querySelector('.fav-text');
+        if (iconSpan) iconSpan.textContent = nextState ? '★' : '☆';
+        if (textSpan) textSpan.textContent = nextState ? 'お気に入り登録中' : 'お気に入りに追加';
+        if (nextState) {
+          favBtn.classList.add('fav-active');
+          showToast('★ お気に入りに追加しました');
+        } else {
+          favBtn.classList.remove('fav-active');
+          showToast('お気に入りを解除しました');
+        }
+      });
+    }
+  }
+
   container.appendChild(headerDiv);
 
   // 1段目: まず知っておくこと

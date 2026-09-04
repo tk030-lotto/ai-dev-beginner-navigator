@@ -7,6 +7,7 @@ import { expandSynonyms } from '../src/core/synonyms';
 import { SearchEngine } from '../src/core/search';
 import { sanitizeInput, detectSecrets } from '../src/core/sanitizer';
 import { LocalStorageHistoryStore } from '../src/core/history';
+import { FavoritesStore } from '../src/core/favorites';
 import type { ProblemPlugin } from '../src/types';
 
 function assert(condition: boolean, message: string) {
@@ -144,5 +145,38 @@ assert(newStore.getLogs().length === 5, 'Imported count should be 5');
 historyStore.clearLogs();
 newStore.clearLogs();
 console.log('✓ HistoryStore test passed.\n');
+
+// 6. FavoritesStore Test
+console.log('6. Testing FavoritesStore...');
+const favStore = new FavoritesStore('test_fav_key');
+favStore.clear();
+assert(favStore.getAll().length === 0, 'Initial favorites should be empty');
+assert(favStore.has('plugin-a') === false, 'Should not have plugin-a initially');
+
+// 追加
+assert(favStore.add('plugin-a') === true, 'add should return true for new item');
+assert(favStore.has('plugin-a') === true, 'Should have plugin-a');
+assert(favStore.add('plugin-a') === false, 'add should return false for duplicate');
+assert(favStore.getAll().length === 1, 'Length should be 1');
+
+// トグル
+const toggledOff = favStore.toggle('plugin-a');
+assert(toggledOff === false, 'toggle should remove plugin-a');
+assert(favStore.has('plugin-a') === false, 'plugin-a should not exist');
+
+const toggledOn = favStore.toggle('plugin-b');
+assert(toggledOn === true, 'toggle should add plugin-b');
+assert(favStore.has('plugin-b') === true, 'plugin-b should exist');
+
+// 削除 & クリア
+favStore.remove('plugin-b');
+assert(favStore.getAll().length === 0, 'remove should empty the list');
+
+favStore.add('p1');
+favStore.add('p2');
+assert(favStore.getAll().length === 2, 'Should have 2 items');
+favStore.clear();
+assert(favStore.getAll().length === 0, 'clear should empty all');
+console.log('✓ FavoritesStore test passed.\n');
 
 console.log('=== All Core Infrastructure Tests Passed Successfully! ===');

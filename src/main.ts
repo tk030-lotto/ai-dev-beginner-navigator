@@ -11,6 +11,7 @@ import {
   PluginRegistry,
   SearchEngine,
   LocalStorageHistoryStore,
+  FavoritesStore,
 } from './core';
 import { registerAllPlugins } from './plugins';
 import {
@@ -29,6 +30,7 @@ import { SearchResult, ProblemPlugin, CategoryType } from './types';
 export const registry = new PluginRegistry();
 export const searchEngine = new SearchEngine();
 export const historyStore = new LocalStorageHistoryStore();
+export const favoritesStore = new FavoritesStore();
 export const router = new HashRouter();
 
 // 全30プラグインの登録
@@ -86,8 +88,10 @@ let categoryTabsInstance: ReturnType<typeof createCategoryTabs> | null = null;
  */
 function getCategoryCounts(): Record<CategoryFilter, number> {
   const allPlugins = registry.getAll();
+  const favIds = new Set(favoritesStore.getAll());
   const counts: Record<CategoryFilter, number> = {
     all: allPlugins.length,
+    favorites: 0,
     error: 0,
     ai: 0,
     git: 0,
@@ -96,6 +100,9 @@ function getCategoryCounts(): Record<CategoryFilter, number> {
   };
 
   for (const p of allPlugins) {
+    if (favIds.has(p.metadata.id)) {
+      counts.favorites++;
+    }
     const cat = p.metadata.category;
     if (cat in counts) {
       counts[cat]++;
@@ -118,8 +125,12 @@ function executeSearch(resultsGridEl?: HTMLElement, headerInfoEl?: HTMLElement):
   if (currentQuery.trim()) {
     results = searchEngine.search(plugins, {
       keyword: currentQuery,
-      category: currentCategory,
+      category: currentCategory === 'favorites' ? undefined : currentCategory,
     });
+    if (currentCategory === 'favorites') {
+      const favIds = new Set(favoritesStore.getAll());
+      results = results.filter((r) => favIds.has(r.plugin.metadata.id));
+    }
     // 検索履歴の記録
     historyStore.addLog({
       type: 'search',
@@ -127,9 +138,15 @@ function executeSearch(resultsGridEl?: HTMLElement, headerInfoEl?: HTMLElement):
     });
   } else {
     // クエリが空の場合は全件またはカテゴリ別一覧をスコア1扱いで表示
-    const filtered = currentCategory === 'all'
-      ? plugins
-      : registry.getByCategory(currentCategory as CategoryType);
+    let filtered: ProblemPlugin[];
+    if (currentCategory === 'all') {
+      filtered = plugins;
+    } else if (currentCategory === 'favorites') {
+      const favIds = new Set(favoritesStore.getAll());
+      filtered = plugins.filter((p) => favIds.has(p.metadata.id));
+    } else {
+      filtered = registry.getByCategory(currentCategory as CategoryType);
+    }
 
     results = filtered.map((p) => ({
       plugin: p,
@@ -145,12 +162,13 @@ function executeSearch(resultsGridEl?: HTMLElement, headerInfoEl?: HTMLElement):
 
   grid.innerHTML = '';
   if (results.length === 0) {
+    const isFavEmpty = currentCategory === 'favorites' && !currentQuery.trim();
     grid.innerHTML = `
       <div class="empty-results" style="grid-column: 1 / -1;">
-        <div class="empty-icon">🔍</div>
-        <h3 class="empty-title">該当する解決策が見つかりませんでした</h3>
+        <div class="empty-icon">${isFavEmpty ? '★' : '🔍'}</div>
+        <h3 class="empty-title">${isFavEmpty ? 'お気に入りがまだ登録されていません' : '該当する解決策が見つかりませんでした'}</h3>
         <p class="empty-desc">
-          検索キーワードを変えるか、上部の「検索のヒント」から初心者フレーズを試してみてください。
+          ${isFavEmpty ? '解決ビューの右上にある「お気に入りに追加」を押すと、ここに保存されます。' : '検索キーワードを変えるか、上部の「検索のヒント」から初心者フレーズを試してみてください。'}
         </p>
       </div>
     `;
@@ -265,6 +283,7 @@ function renderDetailView(pluginId: string): void {
   const view = createSolutionView({
     plugin,
     relatedPlugins,
+    favoritesStore,
     onBack: () => {
       router.navigate('/');
     },
