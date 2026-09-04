@@ -24,9 +24,9 @@ export const SYNONYM_DICTIONARY: SynonymMapping[] = [
     phrases: ['消えた', '戻したい', '取り消したい', 'やり直したい', '消去', '消した', '復元', '元に戻す'],
     concepts: ['restore', 'revert', 'reset', 'undo', 'recover'],
   },
-  // 3. エラー・障害系
+  // 3. エラー・障害系（仕様書第7章準拠）
   {
-    phrases: ['動かない', '落ちる', '赤文字', '止まった', '動かなくなった', 'バグ', 'クラッシュ', '失敗'],
+    phrases: ['動かない', '落ちる', '赤文字', '止まった', '動かなくなった', 'バグ', 'クラッシュ'],
     concepts: ['error', 'exception', 'failed', 'trouble', 'crash', 'bug'],
   },
   // 4. プロンプト・指示系

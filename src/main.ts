@@ -12,7 +12,7 @@ import {
   SearchEngine,
   LocalStorageHistoryStore,
 } from './core';
-import { registerInitialPlugins } from './plugins';
+import { registerAllPlugins } from './plugins';
 import {
   createHeader,
   createSearchBar,
@@ -31,8 +31,8 @@ export const searchEngine = new SearchEngine();
 export const historyStore = new LocalStorageHistoryStore();
 export const router = new HashRouter();
 
-// 初期プラグインの登録
-registerInitialPlugins(registry);
+// 全30プラグインの登録
+registerAllPlugins(registry);
 
 // アプリケーション状態
 let currentQuery = '';
