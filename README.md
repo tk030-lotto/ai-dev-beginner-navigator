@@ -171,6 +171,7 @@ ai-dev-beginner-navigator/
 ├── package.json               # プロジェクト定義 & スクリプト
 ├── tsconfig.json              # TypeScript Strict Mode 設定
 ├── vite.config.ts             # Viteビルド設定
+├── ツール起動.bat              # Windows用ワンクリック簡単起動バッチ
 ├── 仕様書.md                  # 仕様書 (Ver 1.0.0 確定版)
 ├── 実装計画書.md              # 全体実装計画書
 ├── RECORD.md                  # 開発記録・決定事項ログ
@@ -185,18 +186,23 @@ ai-dev-beginner-navigator/
 * Node.js: 20.x / 22.x 推奨
 * npm: 10.x 以上
 
-### 1. リポジトリのクローン
+### 簡単起動（Windows）
+プロジェクト直下の **`ツール起動.bat`** をダブルクリックするだけで、初回依存パッケージのインストールからブラウザの自動起動まで自動的に実行されます。
+
+### コマンドラインからの起動手順
+
+#### 1. リポジトリのクローン
 ```bash
 git clone https://github.com/tk030-lotto/ai-dev-beginner-navigator.git
 cd ai-dev-beginner-navigator
 ```
 
-### 2. 依存パッケージのインストール
+#### 2. 依存パッケージのインストール
 ```bash
 npm install
 ```
 
-### 3. 開発サーバーの起動
+#### 3. 開発サーバーの起動
 ```bash
 npm run dev
 ```
