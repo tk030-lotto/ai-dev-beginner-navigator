@@ -11,10 +11,10 @@ echo.
 if not exist "node_modules\" (
     echo 初回起動のため、依存パッケージをインストールしています...
     call npm install
-    if %errorlevel% neq 0 (
+    if errorlevel 1 (
         echo [エラー] npm install に失敗しました。
         pause
-        exit /b %errorlevel%
+        exit /b 1
     )
     echo インストールが完了しました。
     echo.
