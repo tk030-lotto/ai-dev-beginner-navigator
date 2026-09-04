@@ -62,11 +62,11 @@ try {
 assert(duplicateCaught, 'Duplicate registration correctly rejected');
 console.log('  ✓ Item 2 Passed: Single plugin registration and validation verified.');
 
-// 3. 30Pluginを登録できる
-console.log('Item 3: 30Pluginを登録できる');
+// 3. 30Plugin以上（全50Plugin）を登録できる
+console.log('Item 3: 30Plugin以上（全50Plugin）を登録できる');
 registerAllPlugins(registry);
 const registeredList = registry.getAll();
-assert(registeredList.length === 30, `Expected 30 plugins, got ${registeredList.length}`);
+assert(registeredList.length === 50, `Expected 50 plugins, got ${registeredList.length}`);
 const counts = {
   error: registry.getByCategory('error').length,
   ai: registry.getByCategory('ai').length,
@@ -74,12 +74,12 @@ const counts = {
   file: registry.getByCategory('file').length,
   'dev-support': registry.getByCategory('dev-support').length,
 };
-assert(counts.error === 5, `Error expected 5, got ${counts.error}`);
-assert(counts.ai === 10, `AI expected 10, got ${counts.ai}`);
-assert(counts.git === 6, `Git expected 6, got ${counts.git}`);
-assert(counts.file === 5, `File expected 5, got ${counts.file}`);
-assert(counts['dev-support'] === 4, `Dev expected 4, got ${counts['dev-support']}`);
-console.log('  ✓ Item 3 Passed: Exactly 30 plugins registered (Error:5, AI:10, Git:6, File:5, Dev:4).');
+assert(counts.error === 7, `Error expected 7, got ${counts.error}`);
+assert(counts.ai === 13, `AI expected 13, got ${counts.ai}`);
+assert(counts.git === 9, `Git expected 9, got ${counts.git}`);
+assert(counts.file === 9, `File expected 9, got ${counts.file}`);
+assert(counts['dev-support'] === 12, `Dev expected 12, got ${counts['dev-support']}`);
+console.log('  ✓ Item 3 Passed: Exactly 50 plugins registered (Error:7, AI:13, Git:9, File:9, Dev:12).');
 
 // 4. 初心者表現から検索できる
 console.log('Item 4: 初心者表現から検索できる');
@@ -219,7 +219,7 @@ console.log('  ✓ Item 14 Passed: No command auto-execution mechanisms exist; r
 // 15. READMEと仕様書の内容と実装が一致する
 console.log('Item 15: READMEと仕様書の内容と実装が一致する');
 const pluginIds = allPlugins.map(p => p.metadata.id);
-assert(new Set(pluginIds).size === 30, '30 unique plugin IDs match specification exactly');
+assert(new Set(pluginIds).size === 50, '50 unique plugin IDs match specification exactly');
 console.log('  ✓ Item 15 Passed: Plugin IDs and category structures conform to specification.');
 
 console.log('\n======================================================');

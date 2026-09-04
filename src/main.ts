@@ -35,7 +35,7 @@ export const favoritesStore = new FavoritesStore();
 export const feedbackStore = new FeedbackStore();
 export const router = new HashRouter();
 
-// 全30プラグインの登録
+// 全50プラグインの登録
 registerAllPlugins(registry);
 
 // アプリケーション状態

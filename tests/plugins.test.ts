@@ -1,5 +1,5 @@
 /**
- * 全30プラグインおよびCore基盤統合動作検証テスト
+ * 全50プラグインおよびCore基盤統合動作検証テスト
  */
 
 import { PluginRegistry } from '../src/core/registry';
@@ -15,11 +15,11 @@ function assert(condition: boolean, message: string) {
   }
 }
 
-console.log('=== Starting All 30 Plugins & E2E Integration Tests ===\n');
+console.log('=== Starting All 50 Plugins & E2E Integration Tests ===\n');
 
-// 1. 全30プラグインのデータ構造およびプロンプト生成検証
-console.log('1. Validating All 30 Plugin Data Structures...');
-assert(allPlugins.length === 30, `Expected 30 plugins in allPlugins, got ${allPlugins.length}`);
+// 1. 全50プラグインのデータ構造およびプロンプト生成検証
+console.log('1. Validating All 50 Plugin Data Structures...');
+assert(allPlugins.length === 50, `Expected 50 plugins in allPlugins, got ${allPlugins.length}`);
 
 const seenIds = new Set<string>();
 
@@ -58,29 +58,30 @@ console.log(`✓ All ${allPlugins.length} plugins validated without duplicate ID
 console.log('2. Testing Registry Bulk Registration...');
 const registry = new PluginRegistry();
 const registeredCount = registerAllPlugins(registry);
-assert(registeredCount === 30, `Expected 30 plugins registered, got ${registeredCount}`);
-assert(registry.count() === 30, 'Registry count should be 30');
+assert(registeredCount === 50, `Expected 50 plugins registered, got ${registeredCount}`);
+assert(registry.count() === 50, 'Registry count should be 50');
 
-// カテゴリ別件数検証（仕様書第8章: Error 5, AI 10, Git 6, File 5, Dev Support 4）
+// カテゴリ別件数検証（Error 7, AI 13, Git 9, File 9, Dev Support 12 = 計50）
 const errorList = registry.getByCategory('error');
 const aiList = registry.getByCategory('ai');
 const gitList = registry.getByCategory('git');
 const fileList = registry.getByCategory('file');
 const devList = registry.getByCategory('dev-support');
 
-assert(errorList.length === 5, `Error category should have 5 plugins, got ${errorList.length}`);
-assert(aiList.length === 10, `AI category should have 10 plugins, got ${aiList.length}`);
-assert(gitList.length === 6, `Git category should have 6 plugins, got ${gitList.length}`);
-assert(fileList.length === 5, `File category should have 5 plugins, got ${fileList.length}`);
-assert(devList.length === 4, `Dev Support category should have 4 plugins, got ${devList.length}`);
-console.log('✓ Category distribution verified: Error=5, AI=10, Git=6, File=5, Dev=4 (Total: 30).\n');
+assert(errorList.length === 7, `Error category should have 7 plugins, got ${errorList.length}`);
+assert(aiList.length === 13, `AI category should have 13 plugins, got ${aiList.length}`);
+assert(gitList.length === 9, `Git category should have 9 plugins, got ${gitList.length}`);
+assert(fileList.length === 9, `File category should have 9 plugins, got ${fileList.length}`);
+assert(devList.length === 12, `Dev Support category should have 12 plugins, got ${devList.length}`);
+console.log('✓ Category distribution verified: Error=7, AI=13, Git=9, File=9, Dev=12 (Total: 50).\n');
 
 // 3. 初心者語句による検索エンジン結合テスト
-console.log('3. Testing Search Engine with Beginner Phrases Across All 30 Plugins...');
+console.log('3. Testing Search Engine with Beginner Phrases Across All 50 Plugins...');
 const searchEngine = new SearchEngine();
 const pluginsList = registry.getAll();
 
 const testQueries = [
+  // 既存30件
   { query: '赤い文字', expectedId: 'err-explainer' },
   { query: 'さっきまで動いてた', expectedId: 'err-cause-finder' },
   { query: 'ログが長すぎる', expectedId: 'err-log-cleaner' },
@@ -111,6 +112,27 @@ const testQueries = [
   { query: '表を作りたい', expectedId: 'dev-md-table' },
   { query: 'カンマの位置', expectedId: 'dev-json-validator' },
   { query: 'どこまでAIに任せていい？', expectedId: 'dev-ai-vs-human' },
+  // 新規20件
+  { query: 'Reactのエラーが消えない', expectedId: 'err-react-render' },
+  { query: 'Tracebackと出た', expectedId: 'err-python-trace' },
+  { query: 'コードをチェックしてほしい', expectedId: 'ai-code-review-request' },
+  { query: 'コードがごちゃごちゃしてきた', expectedId: 'ai-refactor-guide' },
+  { query: '一緒にバグを探してほしい', expectedId: 'ai-debug-pair' },
+  { query: 'プルリクの書き方がわからない', expectedId: 'git-pr-template' },
+  { query: 'バージョンを付けたい', expectedId: 'git-tag-release' },
+  { query: 'Gitを最初から始めたい', expectedId: 'git-init-guide' },
+  { query: 'Dockerの使い方がわからない', expectedId: 'file-docker-basics' },
+  { query: 'VSCodeの設定が保存されない', expectedId: 'file-vscode-settings' },
+  { query: '.gitignoreに書いたのに消えない', expectedId: 'file-gitignore-guide' },
+  { query: 'tsconfigの書き方がわからない', expectedId: 'file-tsconfig-guide' },
+  { query: 'useStateの使いどころがわからない', expectedId: 'dev-react-hooks' },
+  { query: 'Pythonのパッケージが競合した', expectedId: 'dev-python-venv' },
+  { query: 'npm run devって何？', expectedId: 'dev-npm-scripts' },
+  { query: 'APIのURLどう決めればいい？', expectedId: 'dev-api-design' },
+  { query: '正規表現が読めない', expectedId: 'dev-regex-builder' },
+  { query: '仕様書の書き方がわからない', expectedId: 'dev-markdown-docs' },
+  { query: 'ページを開くのが遅い', expectedId: 'dev-performance-check' },
+  { query: 'キーボードで操作できない', expectedId: 'dev-accessibility-basics' },
 ];
 
 for (const tc of testQueries) {
@@ -130,5 +152,5 @@ assert(
   'Filtered search must strictly contain only AI plugins'
 );
 
-console.log('\n✓ All 30 beginner phrase test queries and category filters passed successfully.');
-console.log('=== All 30 Plugins & Integration Tests Passed Successfully ===');
+console.log('\n✓ All 50 beginner phrase test queries and category filters passed successfully.');
+console.log('=== All 50 Plugins & Integration Tests Passed Successfully ===');
