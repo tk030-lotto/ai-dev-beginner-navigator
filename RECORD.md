@@ -136,6 +136,8 @@
     - `README.md` を更新。正確なディレクトリ構成、全30プラグイン実装完了一覧、ローカル起動手順（`npm install`, `npm run dev`, `npm test`, `npm run build`）、ライセンス表記を整合
   * GitHub Pages 自動デプロイ設定の準備（公開は後日実施）:
     - 後日GitHub Pagesを有効化した際に自動動作する `.github/workflows/deploy.yml`（GitHub Actions ワークフロー）を作成
+  * Windows用ワンクリック起動バッチ整備:
+    - ダブルクリックで依存解決・ブラウザ表示・サーバー起動を行う `ツール起動.bat`（Shift-JIS/CP932準拠）を配置
   * 開発計画・成果記録の永続化:
     - `implementation_plan_phase6.md`, `walkthrough_phase6.md`
 * **検証結果**:
