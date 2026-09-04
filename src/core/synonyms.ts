@@ -76,10 +76,10 @@ export function expandSynonyms(queryText: string): string[] {
   // シノニム辞書との照合
   for (const mapping of SYNONYM_DICTIONARY) {
     const matchesPhrase = mapping.phrases.some(
-      (phrase) => normalized.includes(phrase.toLowerCase()) || tokens.includes(phrase.toLowerCase())
+      (phrase) => normalized === phrase.toLowerCase() || tokens.includes(phrase.toLowerCase())
     );
     const matchesConcept = mapping.concepts.some(
-      (concept) => normalized.includes(concept.toLowerCase()) || tokens.includes(concept.toLowerCase())
+      (concept) => normalized === concept.toLowerCase() || tokens.includes(concept.toLowerCase())
     );
 
     if (matchesPhrase || matchesConcept) {

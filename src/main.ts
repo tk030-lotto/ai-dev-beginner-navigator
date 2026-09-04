@@ -285,5 +285,3 @@ router.onRouteChange((route) => {
 
 // ルーター起動
 router.init();
-
-console.log('AI Dev Beginner Navigator Phase 2 UI initialized successfully.');
