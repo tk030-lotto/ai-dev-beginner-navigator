@@ -4,7 +4,7 @@
 
 import { CategoryType } from '../../types';
 
-export type CategoryFilter = CategoryType | 'all';
+export type CategoryFilter = CategoryType | 'all' | 'favorites';
 
 export interface CategoryTabsProps {
   onSelectCategory: (category: CategoryFilter) => void;
@@ -19,6 +19,7 @@ export interface CategoryTabItem {
 
 export const CATEGORY_DEFINITIONS: CategoryTabItem[] = [
   { id: 'all', label: 'すべて' },
+  { id: 'favorites', label: '★ お気に入り' },
   { id: 'error', label: 'エラー解決' },
   { id: 'ai', label: 'AI連携・質問' },
   { id: 'git', label: 'Git・コマンド' },
@@ -38,6 +39,7 @@ export function createCategoryTabs(props: CategoryTabsProps): {
   let currentCategory: CategoryFilter = props.activeCategory || 'all';
   let counts: Record<CategoryFilter, number> = props.counts || {
     all: 0,
+    favorites: 0,
     error: 0,
     ai: 0,
     git: 0,
