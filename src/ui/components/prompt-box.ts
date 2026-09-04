@@ -130,11 +130,13 @@ export function createPromptBox(props: PromptBoxProps): HTMLElement {
 
   // プロンプト生成実行
   const updatePrompt = () => {
+    const rawSummary = summaryInput.value.trim();
     const rawDetail = detailInput.value.trim();
-    const sanitizeResult = sanitizeInput(rawDetail);
+    const summarySanitizeResult = sanitizeInput(rawSummary);
+    const detailSanitizeResult = sanitizeInput(rawDetail);
 
     // 秘匿情報マスク警告
-    if (sanitizeResult.hasSecrets) {
+    if (summarySanitizeResult.hasSecrets || detailSanitizeResult.hasSecrets) {
       redactAlert.classList.add('visible');
     } else {
       redactAlert.classList.remove('visible');
@@ -146,8 +148,8 @@ export function createPromptBox(props: PromptBoxProps): HTMLElement {
     const context = {
       os: osSelect.value,
       language: langSelect.value,
-      userInput: summaryInput.value.trim() || undefined,
-      detail: sanitizeResult.sanitizedText || undefined,
+      userInput: summarySanitizeResult.sanitizedText || undefined,
+      detail: detailSanitizeResult.sanitizedText || undefined,
     };
 
     if (currentTemplate && typeof currentTemplate.generate === 'function') {

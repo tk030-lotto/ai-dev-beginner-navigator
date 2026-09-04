@@ -57,7 +57,6 @@ export function createSearchBar(props: SearchBarProps): SearchBarInstance {
           placeholder="${PLACEHOLDER_CANDIDATES[0]}"
           autocomplete="off"
           spellcheck="false"
-          value="${props.initialQuery || ''}"
         />
         <button class="search-clear-btn" id="hero-search-clear" style="display: none;" title="入力をクリア">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -78,6 +77,7 @@ export function createSearchBar(props: SearchBarProps): SearchBarInstance {
 
   const input = container.querySelector<HTMLInputElement>('#hero-search-input')!;
   const clearBtn = container.querySelector<HTMLButtonElement>('#hero-search-clear')!;
+  input.value = props.initialQuery || '';
 
   // プレースホルダーの自動切り替え
   let placeholderIndex = 0;

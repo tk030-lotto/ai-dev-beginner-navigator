@@ -49,6 +49,7 @@ export const SYNONYM_DICTIONARY: SynonymMapping[] = [
     phrases: ['キー', 'パスワード', '秘密', '隠したい', '漏洩', '公開したくない'],
     concepts: ['env', 'api-key', 'secret', 'token', 'credentials', 'security'],
   },
+
 ];
 
 /**
@@ -74,12 +75,18 @@ export function expandSynonyms(queryText: string): string[] {
   }
 
   // シノニム辞書との照合
+  // 部分一致（includes）とトークン完全一致の両方でマッチ判定する
+  // 例: 「赤文字が出た」は normalized.includes('赤文字') でヒットする
   for (const mapping of SYNONYM_DICTIONARY) {
     const matchesPhrase = mapping.phrases.some(
-      (phrase) => normalized === phrase.toLowerCase() || tokens.includes(phrase.toLowerCase())
+      (phrase) =>
+        normalized.includes(phrase.toLowerCase()) ||
+        tokens.includes(phrase.toLowerCase())
     );
     const matchesConcept = mapping.concepts.some(
-      (concept) => normalized === concept.toLowerCase() || tokens.includes(concept.toLowerCase())
+      (concept) =>
+        normalized.includes(concept.toLowerCase()) ||
+        tokens.includes(concept.toLowerCase())
     );
 
     if (matchesPhrase || matchesConcept) {

@@ -6,6 +6,19 @@
 import { HistoryStorageInterface, ActivityLog } from '../../types';
 import { showToast } from '../utils/toast';
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, (character) => {
+    const entities: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;',
+    };
+    return entities[character];
+  });
+}
+
 export interface HistoryModalProps {
   historyStore: HistoryStorageInterface;
   onNavigateToPlugin?: (pluginId: string) => void;
@@ -131,14 +144,20 @@ export function createHistoryModal(props: HistoryModalProps): {
       item.className = 'history-item';
 
       const info = getActionLabel(log);
+      const safeInfo = {
+        type: escapeHtml(info.type),
+        title: escapeHtml(info.title),
+        timestamp: escapeHtml(formatDate(log.timestamp)),
+        id: escapeHtml(log.id),
+      };
 
       item.innerHTML = `
         <div class="history-item-left">
           <div style="display: flex; align-items: center; gap: 0.4rem;">
-            <span class="history-type-badge">[${info.type}]</span>
-            <span class="history-item-meta">${formatDate(log.timestamp)}</span>
+            <span class="history-type-badge">[${safeInfo.type}]</span>
+            <span class="history-item-meta">${safeInfo.timestamp}</span>
           </div>
-          <div class="history-item-title">${info.title}</div>
+          <div class="history-item-title">${safeInfo.title}</div>
         </div>
         <button class="history-delete-btn" data-id="${log.id}" title="この履歴を削除">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

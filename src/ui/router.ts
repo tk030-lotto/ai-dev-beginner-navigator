@@ -29,9 +29,15 @@ export class HashRouter {
     // #/plugin/:id パターン
     const pluginMatch = hash.match(/^\/plugin\/([^/?]+)/);
     if (pluginMatch) {
+      let pluginId: string;
+      try {
+        pluginId = decodeURIComponent(pluginMatch[1]);
+      } catch {
+        return { path: '/' };
+      }
       return {
         path: '/plugin',
-        pluginId: decodeURIComponent(pluginMatch[1]),
+        pluginId,
       };
     }
 

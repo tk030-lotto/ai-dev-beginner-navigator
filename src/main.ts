@@ -222,16 +222,28 @@ function renderDetailView(pluginId: string): void {
 
   const plugin = registry.getById(pluginId);
   if (!plugin) {
-    mainContainer.innerHTML = `
-      <div class="empty-results">
-        <h2 class="empty-title">プラグインが見つかりません</h2>
-        <p class="empty-desc">指定されたID「${pluginId}」のプラグインは存在しないか、未登録です。</p>
-        <button class="btn btn-secondary" style="margin-top: 1rem;" id="notfound-back-btn">一覧に戻る</button>
-      </div>
-    `;
-    mainContainer.querySelector('#notfound-back-btn')?.addEventListener('click', () => {
-      router.navigate('/');
-    });
+    const notFound = document.createElement('div');
+    notFound.className = 'empty-results';
+
+    const title = document.createElement('h2');
+    title.className = 'empty-title';
+    title.textContent = 'プラグインが見つかりません';
+
+    const desc = document.createElement('p');
+    desc.className = 'empty-desc';
+    desc.textContent = `指定されたID「${pluginId}」のプラグインは存在しないか、未登録です。`;
+
+    const backBtn = document.createElement('button');
+    backBtn.className = 'btn btn-secondary';
+    backBtn.style.marginTop = '1rem';
+    backBtn.id = 'notfound-back-btn';
+    backBtn.textContent = '一覧に戻る';
+    backBtn.addEventListener('click', () => router.navigate('/'));
+
+    notFound.appendChild(title);
+    notFound.appendChild(desc);
+    notFound.appendChild(backBtn);
+    mainContainer.appendChild(notFound);
     return;
   }
 
@@ -275,6 +287,10 @@ function renderDetailView(pluginId: string): void {
 
 // ルーター変更イベントのリスナー
 router.onRouteChange((route) => {
+  // 次画面に移行する前にシーク・タイマー・リスナーを解放
+  searchBarInstance?.destroy();
+  searchBarInstance = null;
+
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (route.path === '/plugin' && route.pluginId) {
     renderDetailView(route.pluginId);
