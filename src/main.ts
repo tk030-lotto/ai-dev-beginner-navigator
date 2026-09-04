@@ -12,6 +12,7 @@ import {
   SearchEngine,
   LocalStorageHistoryStore,
   FavoritesStore,
+  FeedbackStore,
 } from './core';
 import { registerAllPlugins } from './plugins';
 import {
@@ -31,6 +32,7 @@ export const registry = new PluginRegistry();
 export const searchEngine = new SearchEngine();
 export const historyStore = new LocalStorageHistoryStore();
 export const favoritesStore = new FavoritesStore();
+export const feedbackStore = new FeedbackStore();
 export const router = new HashRouter();
 
 // 全30プラグインの登録
@@ -178,6 +180,7 @@ function executeSearch(resultsGridEl?: HTMLElement, headerInfoEl?: HTMLElement):
   results.forEach((res) => {
     const card = createResultCard({
       result: res,
+      feedbackStore,
       onSelect: (id) => {
         router.navigate(`/plugin/${id}`);
       },
@@ -284,6 +287,7 @@ function renderDetailView(pluginId: string): void {
     plugin,
     relatedPlugins,
     favoritesStore,
+    feedbackStore,
     onBack: () => {
       router.navigate('/');
     },

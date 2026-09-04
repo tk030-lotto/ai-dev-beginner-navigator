@@ -3,9 +3,11 @@
  */
 
 import { SearchResult, CategoryType } from '../../types';
+import { FeedbackStore } from '../../core/feedback';
 
 export interface ResultCardProps {
   result: SearchResult;
+  feedbackStore?: FeedbackStore;
   onSelect: (pluginId: string) => void;
 }
 
@@ -40,6 +42,12 @@ export function createResultCard(props: ResultCardProps): HTMLElement {
     matchSummary = '関連ヒット';
   }
 
+  // フィードバックバッジ
+  const feedback = props.feedbackStore?.get(metadata.id);
+  const feedbackBadge = feedback
+    ? `<span class="feedback-badge" style="margin-left: auto; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; padding: 2px 7px; border-radius: 4px; background: ${feedback.helpful ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color: ${feedback.helpful ? 'var(--accent-teal)' : 'var(--accent-rose)'}; font-weight: 600;">${feedback.helpful ? '👍 解決済' : '👎 未解決'}</span>`
+    : '';
+
   // 初心者フレーズリスト（マッチしているものはハイライト）
   const phrasesHtml = metadata.beginnerPhrases
     .slice(0, 4)
@@ -53,6 +61,7 @@ export function createResultCard(props: ResultCardProps): HTMLElement {
     <div class="card-top">
       <span class="card-category-badge ${badgeClass}">${categoryLabel}</span>
       ${matchSummary ? `<span class="card-match-reason">${matchSummary}</span>` : ''}
+      ${feedbackBadge}
     </div>
     <h2 class="card-title">${metadata.name}</h2>
     <p class="card-description">${metadata.description}</p>
