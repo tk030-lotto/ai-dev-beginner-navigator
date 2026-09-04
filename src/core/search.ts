@@ -44,6 +44,7 @@ export class SearchEngine {
       }));
     }
 
+    const normalizedRaw = rawKeyword.toLowerCase().trim();
     // シノニム展開を含めた検索語リスト
     const searchTerms = expandSynonyms(rawKeyword);
 
@@ -54,21 +55,38 @@ export class SearchEngine {
       const matchedBeginnerPhrases: string[] = [];
       let totalScore = 0;
 
-      // 1. beginnerPhrases (重み 3)
+      // 1. beginnerPhrases (基本重み 3 + 直接/完全一致優先度: 仕様書第6.2章)
       const matchedPhrases: string[] = [];
+      let phraseScore = 0;
       for (const phrase of plugin.metadata.beginnerPhrases) {
         const lowerPhrase = phrase.toLowerCase();
-        const isMatched = searchTerms.some(
-          (term) => lowerPhrase.includes(term) || term.includes(lowerPhrase)
-        );
-        if (isMatched) {
+        let matched = false;
+
+        // 完全一致ボーナス（最優先）
+        if (lowerPhrase === normalizedRaw) {
+          phraseScore += 30;
+          matched = true;
+        } else if (lowerPhrase.includes(normalizedRaw) || normalizedRaw.includes(lowerPhrase)) {
+          // 生クエリとの直接部分一致
+          phraseScore += 15;
+          matched = true;
+        } else if (
+          searchTerms.some(
+            (term) => lowerPhrase.includes(term) || term.includes(lowerPhrase)
+          )
+        ) {
+          // シノニム展開による一致
+          phraseScore += SEARCH_WEIGHTS.beginnerPhrases;
+          matched = true;
+        }
+
+        if (matched) {
           matchedPhrases.push(phrase);
           matchedBeginnerPhrases.push(phrase);
         }
       }
       if (matchedPhrases.length > 0) {
-        const points = matchedPhrases.length * SEARCH_WEIGHTS.beginnerPhrases;
-        totalScore += points;
+        totalScore += phraseScore;
         matchDetails.push({
           field: 'beginnerPhrases',
           weight: SEARCH_WEIGHTS.beginnerPhrases,
@@ -76,30 +94,46 @@ export class SearchEngine {
         });
       }
 
-      // 2. name (重み 2)
+      // 2. name (基本重み 2 + 直接/完全一致優先度: 仕様書第6.2章)
       const lowerName = plugin.metadata.name.toLowerCase();
-      const matchedNameTerms = searchTerms.filter((term) => lowerName.includes(term));
-      if (matchedNameTerms.length > 0) {
-        const points = SEARCH_WEIGHTS.name;
-        totalScore += points;
+      let nameScore = 0;
+      if (lowerName === normalizedRaw) {
+        nameScore += 25;
+      } else if (lowerName.includes(normalizedRaw)) {
+        nameScore += 12;
+      } else {
+        const matchedNameTerms = searchTerms.filter((term) => lowerName.includes(term));
+        if (matchedNameTerms.length > 0) {
+          nameScore += SEARCH_WEIGHTS.name;
+        }
+      }
+      if (nameScore > 0) {
+        totalScore += nameScore;
         matchDetails.push({
           field: 'name',
           weight: SEARCH_WEIGHTS.name,
-          matchedTerms: matchedNameTerms,
+          matchedTerms: [plugin.metadata.name],
         });
       }
 
-      // 3. keywords (重み 2)
+      // 3. keywords (基本重み 2 + 完全一致優先度)
       const matchedKeywords: string[] = [];
+      let kwScore = 0;
       for (const kw of plugin.metadata.keywords) {
         const lowerKw = kw.toLowerCase();
-        if (searchTerms.some((term) => lowerKw.includes(term) || term.includes(lowerKw))) {
+        if (lowerKw === normalizedRaw) {
+          kwScore += 20;
+          matchedKeywords.push(kw);
+        } else if (lowerKw.includes(normalizedRaw) || normalizedRaw.includes(lowerKw)) {
+          kwScore += 10;
+          matchedKeywords.push(kw);
+        } else if (searchTerms.some((term) => lowerKw.includes(term) || term.includes(lowerKw))) {
+          kwScore += SEARCH_WEIGHTS.keywords;
           matchedKeywords.push(kw);
         }
       }
       if (matchedKeywords.length > 0) {
-        const points = matchedKeywords.length * SEARCH_WEIGHTS.keywords;
-        totalScore += points;
+        totalScore += kwScore;
         matchDetails.push({
           field: 'keywords',
           weight: SEARCH_WEIGHTS.keywords,
