@@ -68,7 +68,10 @@ export class FeedbackStore {
     if (this.isStorageAvailable()) {
       try {
         window.localStorage.setItem(this.storageKey, JSON.stringify(data));
-      } catch (err) {
+      } catch (err: any) {
+        if (err && err.name === 'QuotaExceededError') {
+          window.dispatchEvent(new CustomEvent('quota-exceeded'));
+        }
         console.error('Failed to save feedback to localStorage:', err);
       }
     } else {

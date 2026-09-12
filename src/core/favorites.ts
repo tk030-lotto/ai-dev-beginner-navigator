@@ -58,7 +58,10 @@ export class FavoritesStore {
     if (this.isStorageAvailable()) {
       try {
         window.localStorage.setItem(this.storageKey, JSON.stringify(ids));
-      } catch (err) {
+      } catch (err: any) {
+        if (err && err.name === 'QuotaExceededError') {
+          window.dispatchEvent(new CustomEvent('quota-exceeded'));
+        }
         console.error('Failed to save favorites to localStorage:', err);
       }
     } else {

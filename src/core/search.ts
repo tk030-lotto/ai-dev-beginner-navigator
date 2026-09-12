@@ -7,7 +7,9 @@ import type { ProblemPlugin, SearchQuery, SearchResult, FieldMatchDetail } from 
 import { expandSynonyms } from './synonyms';
 
 /**
- * 仕様書第6.2章で定義されたスコア重み係数
+ * 検索スコア重み係数
+ * ※ 仕様書 第6.2章（初期スコアリング）の定義と完全に整合しています。
+ * (beginnerPhrases: 3, name: 2, keywords: 2, description: 1, summary: 1)
  */
 export const SEARCH_WEIGHTS = {
   beginnerPhrases: 3,
