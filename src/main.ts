@@ -26,6 +26,7 @@ import {
   CategoryFilter,
 } from './ui';
 import { SearchResult, ProblemPlugin, CategoryType } from './types';
+import { showToast } from './ui/utils/toast';
 
 // Coreシングルトンインスタンス
 export const registry = new PluginRegistry();
@@ -47,6 +48,12 @@ const app = document.getElementById('app');
 if (!app) {
   throw new Error('Root #app element not found');
 }
+
+// ストレージ容量不足時の通知設定
+window.addEventListener('quota-exceeded', () => {
+  showToast('保存領域不足のため一部データを保存できませんでした。不要な履歴を削除してください。');
+});
+
 app.innerHTML = '';
 app.className = 'app-container';
 

@@ -51,7 +51,10 @@ export class LocalStorageHistoryStore implements HistoryStorageInterface {
     if (this.isStorageAvailable()) {
       try {
         window.localStorage.setItem(this.storageKey, JSON.stringify(trimmed));
-      } catch (err) {
+      } catch (err: any) {
+        if (err && err.name === 'QuotaExceededError') {
+          window.dispatchEvent(new CustomEvent('quota-exceeded'));
+        }
         console.error('Failed to save logs to localStorage:', err);
       }
     } else {

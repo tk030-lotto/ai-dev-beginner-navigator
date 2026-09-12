@@ -41,7 +41,7 @@ export const SECRET_PATTERNS: SecretPattern[] = [
   // 6. 設定ファイル内のパスワード / シークレット値 (password=xxx, secret:xxx, password xxx 等)
   {
     name: 'Password / Secret Value',
-    regex: /(["']?(?:password|secret|api[_-]?key|access[_-]?token)["']?\s*[:=,]\s*["']?)([^"'\s,;]{4,})(["']?)/gi,
+    regex: /(["']?\b(?:password|secret|api[_-]?key|access[_-]?token)\b["']?\s*[:=,]\s*["']?)([^"'\s,;]{4,})(["']?)/gi,
   },
 ];
 
@@ -107,7 +107,7 @@ export function sanitizeInput(input: string): SanitizeResult {
 export function detectSecrets(input: string): boolean {
   if (!input) return false;
   return SECRET_PATTERNS.some((pattern) => {
-    pattern.regex.lastIndex = 0;
-    return pattern.regex.test(input);
+    const regex = new RegExp(pattern.regex.source, pattern.regex.flags);
+    return regex.test(input);
   });
 }
