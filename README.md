@@ -2,6 +2,8 @@
 
 > **「専門用語を知らなくても、困りごとから解決策とAIへの聞き方にたどり着ける」**
 
+🔗 **Web公開URL**: [https://tk030-lotto.github.io/ai-dev-beginner-navigator/](https://tk030-lotto.github.io/ai-dev-beginner-navigator/)
+
 AIを使った開発で初心者が遭遇する、
 
 * 「何がわからないのかわからない」
