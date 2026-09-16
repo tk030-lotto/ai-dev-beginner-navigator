@@ -227,10 +227,24 @@
   * note記事本文、Xポスト添付に即座に利用可能な品質・容量であることを確認
   * `origin/main` へのプッシュ完了
 
+### Phase 12: リポジトリ公開 & GitHub Pages デプロイ（完了）
+* **完了日**: 2026-09-16
+* **コミット**: 本フェーズコミット
+* **成果物**:
+  * リポジトリの可視性を Private から Public に変更
+  * GitHub Pages ビルド・デプロイソースを GitHub Actions に設定
+  * `.github/workflows/deploy.yml` 経由での自動ビルド・テスト・デプロイパイプライン稼働
+  * `README.md` に Web 公開 URL を掲載
+* **公開URL**:
+  * [https://tk030-lotto.github.io/ai-dev-beginner-navigator/](https://tk030-lotto.github.io/ai-dev-beginner-navigator/)
+* **検証結果**:
+  * GitHub Actions ワークフロー（Build / Deploy）正常完了
+  * GitHub Pages 疎通確認完了（HTTP 200 / アセット完全読み込み）
+  * `origin/main` へのプッシュ完了
+
 ---
 
-## 5. 今後の運用予定
-* **GitHub Pages Web公開の有効化（後日希望タイミングにて実施）**:
-  1. GitHubリポジトリの「Settings」→「Pages」を開く
-  2. 「Build and deployment」の「Source」を「GitHub Actions」に設定
-  3. `main` ブランチへのプッシュまたは手動実行（workflow_dispatch）により自動ビルド・デプロイが実行され、`https://tk030-lotto.github.io/ai-dev-beginner-navigator/` でWeb公開完了
+## 5. 公開後の運用
+* **継続的デプロイ (CI/CD)**:
+  * `main` ブランチへコミットがプッシュされると、GitHub Actions が自動テスト（`npm test`）と静的ビルド（`npm run build`）を実行し、自動的に GitHub Pages に最新版が反映されます。
+
