@@ -235,11 +235,13 @@
   * GitHub Pages ビルド・デプロイソースを GitHub Actions に設定
   * `.github/workflows/deploy.yml` 経由での自動ビルド・テスト・デプロイパイプライン稼働
   * `README.md` に Web 公開 URL を掲載
+  * リポジトリ About 欄（Description, Website, Topics）の設定完了
 * **公開URL**:
   * [https://tk030-lotto.github.io/ai-dev-beginner-navigator/](https://tk030-lotto.github.io/ai-dev-beginner-navigator/)
 * **検証結果**:
   * GitHub Actions ワークフロー（Build / Deploy）正常完了
   * GitHub Pages 疎通確認完了（HTTP 200 / アセット完全読み込み）
+  * リポジトリ About 欄設定確認完了（Description, Website, Topics）
   * `origin/main` へのプッシュ完了
 
 ---
