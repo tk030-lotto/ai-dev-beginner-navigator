@@ -20,10 +20,8 @@ def verify():
         with open(path, "r", encoding="utf-8") as fp:
             lines = fp.readlines()
         print(f"=== {f} ===")
-        print(f"H1: {lines[0].strip()}")
-        print(f"Line 2: {lines[2].strip()}")
         print("Tail:")
-        for line in lines[-4:]:
+        for line in lines[-6:]:
             print(f"  {line.strip()}")
         print()
 
