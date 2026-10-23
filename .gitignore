@@ -71,3 +71,6 @@ walkthrough*.md
 # 開発ドキュメント除外（フェーズ2-B）
 implementation_plan*.md
 実装計画書.md
+
+# 記事原稿除外（フェーズ2-B-γ）
+articles/
