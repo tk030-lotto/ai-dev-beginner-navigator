@@ -11,9 +11,9 @@ AIを使った開発で初心者が遭遇する、
 * 「AIに聞いたけど説明が難しくて先へ進めない」
 * 「AIから言われたコマンドを実行して大丈夫なのかわからない」
 
-といった問題を、**初心者の言葉から逆引きして解決へ導く完全クライアントサイド完結型ナビゲーションツール**です。
+といった問題を、**初心者の言葉から逆引きして解決へ導くクライアントサイド動作型のナビゲーションツール**です。
 
-単なる30個のツール集ではなく、**「困りごと → 技術概念 → 解決方法 → AIへの質問」**を一本の流れとして提供します。
+単なる50個のツール集ではなく、**「困りごと → 技術概念 → 解決方法 → AIへの質問」**を一本の流れとして提供します。
 
 ---
 
@@ -40,37 +40,37 @@ AI開発では、技術知識そのものよりも、
 
 1. **まず知っておくこと**: いま何が起きているのかを初心者目線で解説
 2. **解決手順**: 具体的な確認事項や対処ステップ（参考コマンド付き）
-3. **注意・やってはいけないこと**: 破壊的操作やデータ消失を防ぐ警告
+3. **注意・やってはいけないこと**: 破壊的操作やデータ消失につながる操作の警告
 4. **AIに相談する**: 環境（OS・言語）を反映した質問文の自動生成・ワンクリックコピー
 5. **関連する困りごと**: 次に遭遇しやすい問題のサジェスト
+6. **解決状況のフィードバック**: 「役に立った / 解決しなかった」の記録
 
 を順番に提示します。
-
 
 ---
 
 ## 🚀 使い方・ご利用手順
 
 1. **困りごとを検索・選択**:
-   - 画面上部の検索バーに、「動かない」「git pushできない」「AIのコードが動かない」などの自然な言葉を入力するか、カテゴリ一覧（Git・環境構築・エラー・AIへの聞き方等）から選択します。
+   - 画面上部の検索バーに、「動かない」「git pushできない」「AIのコードが動かない」などの自然な言葉を入力するか、カテゴリタブ（エラー解決・AI連携・Git・ファイル・開発補助・★お気に入り）から選択します。
 2. **状況を把握する（まず知っておくこと）**:
    - 専門用語を使わない解説で、現在何が起きているのかを把握します。
 3. **解決ステップを確認・実践**:
-   - 表示された手順に従い、ファイルや設定の確認、参考コマンドの実行を行います（危険な操作には警告が表示されます）。
+   - 表示された手順に従い、ファイルや設定の確認、参考コマンドの実行を行います（危険を伴う操作には警告が表示されます）。
 4. **AI相談用プロンプトをワンクリックコピー**:
-   - あなたのOS（Windows/Mac等）や使用言語が反映された「AIへの質問文」が自動生成されるため、「コピー」ボタンを押してChatGPTやClaudeにそのまま貼り付けて質問します。
-
+   - あなたのOS（Windows/Mac等）や使用言語が反映された「AIへの質問文」が自動生成されるため、「プロンプトをコピー」ボタンを押してChatGPTやClaude、Geminiに貼り付けて質問します。
+5. **お気に入り・評価の記録**:
+   - 解決ビュー右上の「お気に入りに追加（★）」や下部のフィードバック（👍 / 👎）で、後から見返したい手順を管理できます。
 
 ---
 
 ## 主な特徴
 
-### 1. 完全ブラウザ完結（サーバーレス・APIキー不要）
+### 1. ブラウザ内完結のクライアントサイド設計（サーバーレス・APIキー不要）
 * アカウント登録不要
 * 専用バックエンドサーバー不要
 * AI APIキー不要
-* すべての処理はブラウザ（ローカル）内で完結
-* 入力内容や履歴を外部サーバーへ一切送信しないプライバシー保護設計
+* 検索・プロンプト生成・履歴管理の処理はブラウザ（ローカル）内で完結し、入力データは外部サーバーへ送信されません（表示フォントのみ Google Fonts CDN から取得します）
 
 ### 2. 初心者の言葉から検索（シノニム辞書 & 重み付きスコアリング）
 専門用語だけでなく、初心者が実際に使う日常表現を検索対象とします。
@@ -83,64 +83,88 @@ AI開発では、技術知識そのものよりも、
 | AIにどう頼めばいい？ | prompt / instruction / template |
 
 ### 3. Micro-Core & Plugin指向アーキテクチャ
-Core基盤（登録・検索・履歴・ルーティング）と知識コンテンツ（Plugin）を完全に分離。全30個のプラグインは同一の共通インターフェース（`ProblemPlugin`）に準拠して実装されており、高い拡張性を持ちます。
+Core基盤（登録・検索・履歴・お気に入り・フィードバック・ルーティング）と知識コンテンツ（Plugin）を分離しています。全50個のプラグインは同一の共通インターフェース（`ProblemPlugin`）に準拠して実装されています。
 
 ### 4. 状況に応じたAI質問文の生成 & 秘匿情報サニタイズ
 各問題に応じて、OSやプログラミング言語、ユーザーの状況を差し込んだAI向け質問文を自動生成します。
 * 生成文のクリップボードワンクリックコピー
 * ChatGPT / Claude / Gemini Web版への直接リンク
-* APIキーやトークン等の秘匿情報が入力された場合、自動で `[REDACTED]` へ置換し警告するサニタイズ機能を標準搭載
+* APIキーやトークン等の秘匿情報パターンが入力された場合、自動で `[REDACTED]` へ置換し警告するサニタイズ機能を搭載
 
 ### 5. 学習履歴のローカル管理
 * 検索クエリ、閲覧プラグイン、生成プロンプトをブラウザ内（LocalStorage）に最大500件まで自動記録
-* 履歴の個別削除・全消去
+* 履歴の個別削除・画面内確認ダイアログ付きの全消去
 * JSONファイルによる履歴のエクスポートおよびインポート機能
+
+### 6. お気に入り登録 & 解決状況フィードバック
+* **お気に入り機能（★）**: 解決ビュー右上から★ボタンで登録・解除でき、トップ画面の「★ お気に入り」タブから登録済みの解決策だけを絞り込み表示できます（LocalStorage 保存）。
+* **フィードバック機能（👍 / 👎）**: 解決ビュー下部の「役に立った」「解決しなかった」ボタンで記録・取り消しができ、検索結果カード上に「👍 解決済」「👎 未解決」のバッジとして表示されます（LocalStorage 保存）。
 
 ---
 
-## 初期30プラグイン一覧（全件実装完了）
+## 実装済み50プラグイン一覧
 
-仕様書第8章に定義された全30プラグインがすべて実装・検証済みです。
+初期設計の30プラグインに加え、Phase 9 での20プラグイン拡充により、現在50プラグインが実装されています。
 
-### Error（エラー解決系: 5件）
-1. **エラー翻訳・要約ナビ** (`err-explainer`): 赤い文字が出た / エラーの意味がわからない
-2. **原因切り分けガイド** (`err-cause-finder`): なんで動かないの / 原因がわからない
-3. **ログ抜粋・整理ツール** (`err-log-cleaner`): ログが長すぎる / どこをAIに見せればいい？
-4. **エラー相談プロンプト生成** (`err-ai-consultant`): AIにエラーをどう聞く？ / 直し方を聞きたい
-5. **修正案安全性チェッカー** (`err-fix-checker`): AIの言った通りにして大丈夫？ / コードを上書きしていい？
+### Error（エラー解決系: 7件）
+1. **エラー翻訳・要約ナビ** (`err-explainer`): 英語のエラーログやスタックトレースから、何が起きているのか・どこを見ればよいのかを整理して解説します。
+2. **原因切り分けガイド** (`err-cause-finder`): 動かない原因がコード・環境・入力のどこにあるかを段階的に切り分け、最短で原因を特定するためのガイドです。
+3. **ログ抜粋・整理ツール** (`err-log-cleaner`): ターミナルに流れる何十行ものログから、AIやメンターへの相談に必要な重要箇所だけを安全に抽出・整形します。
+4. **エラー相談プロンプト生成** (`err-ai-consultant`): エラーの直し方をAIから正確に引き出すために必要な5大要素（目的・環境・コード・エラー・試したこと）を整理します。
+5. **修正案安全性チェッカー** (`err-fix-checker`): AIが提案したコードを適用する前に、既存機能が壊れないか・不要な削除がないかを点検するためのチェックリストです。
+6. **Reactレンダリング・Hookエラー解決** (`err-react-render`): Rendered fewer hooks than expected や無限再レンダリングのエラーを解消します。
+7. **Python Traceback読み解きナビ** (`err-python-trace`): 長いPythonのTraceback（スタックトレース）から本当の原因行を素早く見つけます。
 
-### AI（AI活用・指示出し系: 10件）
-6. **開発用プロンプト作成ナビ** (`ai-prompt-creator`): AIへの指示の書き方 / プロンプトのテンプレート
-7. **指示文抜け漏れ診断** (`ai-instruction-check`): 伝わらない / AIが意図と違うコードを出す
-8. **AIへの作業依頼分割ガイド** (`ai-task-delegation`): 一気に頼みすぎて失敗した / 小分けにして頼みたい
-9. **回答整理・要点抽出** (`ai-response-organizer`): AIの回答が長くて難しい / 結局何すればいい？
-10. **次のアクション抽出** (`ai-todo-extractor`): 次に何をすればいい？ / TODOの整理
-11. **AI回答比較・検証** (`ai-answer-compare`): 別のAIにも聞きたい / どっちの答えが正しい？
-12. **コード差分確認ナビ** (`ai-diff-analyzer`): どこが変わったかわからない / 変更点だけ知りたい
-13. **送信前情報サニタイザー** (`ai-input-sanitizer`): パスワードやキーをAIに送って大丈夫？ / 秘密情報消したい
-14. **実行前セーフティチェック** (`ai-pre-check`): このコード動かして壊れない？ / 実行前の確認
-15. **生成コード動作検証ガイド** (`ai-post-check`): ちゃんと動いてるか確認したい / テストのやり方
+### AI（AI連携・指示出し系: 13件）
+8. **開発用プロンプト作成ナビ** (`ai-prompt-creator`): AIにプログラミングの質問やコード生成を依頼する際、的確な回答を引き出すためのプロンプト設計をサポートします。
+9. **指示文抜け漏れ診断** (`ai-instruction-check`): AIに意図したコードを出力させるために、プロンプトに前提・入出力・制約・禁止事項が揃っているか診断します。
+10. **AI作業依頼分割ガイド** (`ai-task-delegation`): 大きな開発課題を小さなステップ（型・データ構造→計算ロジック→UI表示→イベント）に分解してAIへ依頼する方法を解説します。
+11. **回答整理・要点抽出** (`ai-response-organizer`): AIからの長文解説や複雑な回答から、結論・修正対象ファイル・具体的なアクションだけを抜き出して整理します。
+12. **次のアクション抽出** (`ai-todo-extractor`): AIとの対話内容や仕様書から、次に自分が実行すべき具体的な作業（Todoチェックリスト）を自動抽出します。
+13. **AI回答比較・検証** (`ai-answer-compare`): ChatGPT、Claude、Geminiなど異なるAIから得られた複数の回答を並べ、それぞれのメリット・デメリットや安全性を比較検証します。
+14. **コード差分確認ナビ** (`ai-diff-analyzer`): AIが提示した変更コードと元コードの差分（どこが追加され、どこが削除されたか）を明確にし、変更理由を理解するためのナビゲーションです。
+15. **送信前情報サニタイザー** (`ai-input-sanitizer`): プロンプトやコードをAIへ送信する前に、APIキー、トークン、DBパスワード、個人名などの秘匿情報が含まれていないかチェック・マスキングします。
+16. **実行前セーフティチェック** (`ai-pre-check`): AIが生成したコードやスクリプトを実行する前に、ファイル消去・無限ループ・意図しない上書きなどのリスクがないか点検します。
+17. **生成コード動作検証ガイド** (`ai-post-check`): AIが書いたコードが本当に仕様通り正しく動いているか、正常データ・異常データ・境界値のテストパターンを用いて検証します。
+18. **AIコードレビュー依頼ナビ** (`ai-code-review-request`): AIに安全で的確なコードレビューを依頼するためのプロンプトを作成します。
+19. **安全リファクタリング指示ガイド** (`ai-refactor-guide`): コードの動きを変えずに、読みやすく保守しやすい形へ安全に整理する指示を出します。
+20. **AIペアデバッグ対話ナビ** (`ai-debug-pair`): AIと対話形式で仮説検証を進め、原因を特定・解消するデバッグプロンプトです。
 
-### Git / Command（コマンド・バージョン管理系: 6件）
-16. **コマンド解説ナビ** (`cmd-explainer`): この黒い画面のコマンド何？ / 意味を知りたい
-17. **危険コマンド判定** (`cmd-risk-analyzer`): 実行したら危ないコマンド？ / 消去コマンドの警告
-18. **Git概念超入門** (`git-concept`): コミットって何？ / プッシュとプルの違い
-19. **Git危険操作チェッカー** (`git-risk-checker`): resetして大丈夫？ / 強制プッシュの危険
-20. **Git用語辞典** (`git-terms`): originって何？ / HEADって何？ / ブランチとは
-21. **Gitトラブル救助隊** (`git-trouble-helper`): コンフリクトした / 間違えてコミットした / 戻したい
+### Git / Command（コマンド・バージョン管理系: 9件）
+21. **コマンド解説ナビ** (`cmd-explainer`): AIが提示したターミナルコマンド（Gitやnpmなど）を単語ごとに分解し、何を実行しようとしているのかを平易に解説します。
+22. **危険コマンド判定** (`cmd-risk-analyzer`): ターミナルで実行しようとしているGitコマンドやシェルの命令に、ファイル削除や履歴破壊などの危険がないかを確認します。
+23. **Git概念超入門** (`git-concept`): コミット、プッシュ、プル、ステージング、リポジトリといったGitの基本概念を、ゲームのセーブや荷物の発送に例えて分かりやすく解説します。
+24. **Git危険操作チェッカー** (`git-risk-checker`): git reset --hard、git push -f、git clean -fd など、ローカルやリモートの変更を不可逆的に消去してしまう破壊的コマンドのリスクと安全策を解説します。
+25. **Git用語辞典** (`git-terms`): origin、HEAD、ブランチ、マージ、クローン、フェッチなど、Gitで頻出する専門用語をわかりやすく解説します。
+26. **Gitトラブル救助隊** (`git-trouble-helper`): コンフリクト（衝突）、プッシュ拒否（rejected）、直前のコミット間違いなど、初心者が遭遇しやすいGitトラブルを安全に解決します。
+27. **プルリクエスト（PR）作成ナビ** (`git-pr-template`): 変更内容をレビュアーにわかりやすく伝えるプルリクエスト説明文の作成手順を案内します。
+28. **Gitタグ＆リリース管理ナビ** (`git-tag-release`): バージョンタグの作成方法とGitHub Releasesでの公開手順を分かりやすく解説します。
+29. **新規Gitリポジトリ初期化手順ナビ** (`git-init-guide`): 作ったばかりのプロジェクトをGitで管理開始し、GitHubに初回プッシュするまでの完全手順です。
 
-### File（ファイル・構成理解系: 5件）
-22. **プロジェクト構成ナビ** (`file-structure`): どのフォルダに何を置く？ / ファイル構成がわからない
-23. **拡張子ガイド** (`file-ext-explainer`): .jsonって何？ / .envって何？ / ファイルの種類
-24. **設定ファイル見取り図** (`file-config-checker`): package.jsonの読み方 / tsconfigって何？
-25. **環境変数・.env保護ガイド** (`file-env-safety`): .envをGitHubに上げちゃダメ？ / APIキーの隠し方
-26. **不要ファイル整理ナビ** (`file-cleaner`): どれを消していい？ / node_modulesって消して平気？
+### File（ファイル・構成理解系: 9件）
+30. **プロジェクト構成ナビ** (`file-structure`): src、public、dist、node_modulesなど、プロジェクト内のフォルダ構成の役割と、新しく作るファイルをどこに配置すべきかを案内します。
+31. **拡張子ガイド** (`file-ext-explainer`): .ts、.js、.json、.env、.md、.svg など、Web開発で頻出するファイル拡張子の種類・用途・編集時の注意点を一覧解説します。
+32. **設定ファイル見取り図** (`file-config-checker`): package.json、tsconfig.json、vite.config.ts など、プロジェクト直下にある設定ファイルの役割と基本構造を解説します。
+33. **環境変数・.env保護ガイド** (`file-env-safety`): APIキーやパスワードなどの機密情報をコードに直書きせず、.envと.gitignoreで安全に管理する手順を解説します。
+34. **不要ファイル整理ナビ** (`file-cleaner`): キャッシュ、ビルド生成物（dist）、ログファイルなど安全に削除・再生成できるファイルと、消すとプロジェクトが壊れるファイルを整理します。
+35. **Dockerfile・Compose基礎ナビ** (`file-docker-basics`): コンテナ環境を作るDockerfileとdocker-compose.ymlの基本的な構造と起動方法を解説します。
+36. **VSCode設定・.vscodeフォルダ見取り図** (`file-vscode-settings`): .vscode/settings.json や extensions.json の役割と開発効率を上げる推奨設定を解説します。
+37. **.gitignore記述ガイド＆除外トラブル解決** (`file-gitignore-guide`): .gitignoreの書き方と、「書いたのにGitの追跡から消えない」現象の解消法を案内します。
+38. **tsconfig.json主要オプション解説ナビ** (`file-tsconfig-guide`): TypeScriptの設定ファイル「tsconfig.json」の重要項目と初心者が陥りやすいエラーを防ぐ設定を解説します。
 
-### Dev Support（開発補助系: 4件）
-27. **Markdown作成ナビ** (`dev-md-formatter`): READMEの書き方 / メモをきれいにまとめたい
-28. **Markdown表生成ツール** (`dev-md-table`): 表を作りたい / テーブルの書き方
-29. **JSON構文チェッカー** (`dev-json-validator`): JSONエラーが出た / カンマの位置がわからない
-30. **AI任せ vs 人間確認境界ガイド** (`dev-ai-vs-human`): どこまでAIに任せていい？ / 自分で確認すべきところ
+### Dev Support（開発補助系: 12件）
+39. **Markdown作成ナビ** (`dev-md-formatter`): GitHubのREADMEや仕様書、開発メモで使われるMarkdown（マークダウン）記法の基本と、伝わりやすい文書構造をガイドします。
+40. **Markdown表生成ツール** (`dev-md-table`): 縦棒（|）とハイフン（-）を用いたMarkdownテーブル（表）の書き方と、テキストデータから見やすい表組を生成する支援を提供します。
+41. **JSON構文チェッカー** (`dev-json-validator`): package.jsonや設定ファイルで発生しやすいJSON構文エラー（末尾カンマ、クォーテーション違い等）の原因と修正方法を解説します。
+42. **AI任せ vs 人間確認境界ガイド** (`dev-ai-vs-human`): AIが得意な作業（コード下書き・構文修正・テストケース作成）と、人間が必ず目視・判断すべき領域（秘匿情報・破壊的コマンド・完成判断）の境界線を明確にします。
+43. **React Hooks入門＆頻出アンチパターン回避** (`dev-react-hooks`): useStateとuseEffectの正しい役割分担と、初心者がハマりがちな不要なState更新を防ぐ指針です。
+44. **Python仮想環境（venv）作成ナビ** (`dev-python-venv`): PC全体のPython環境を汚さずに、プロジェクトごとに独立したライブラリ環境を構築する手順です。
+45. **npm scripts活用＆タスク自動化ナビ** (`dev-npm-scripts`): package.jsonのscriptsセクションを使い、ビルドやテスト、起動コマンドを効率化する方法を解説します。
+46. **REST API設計＆エンドポイント命名ナビ** (`dev-api-design`): 直感的で崩れにくいRESTful APIのエンドポイント設計とHTTPメソッド・ステータスコードの使い分けを解説します。
+47. **正規表現（RegEx）作成＆検証ナビ** (`dev-regex-builder`): メールアドレスや郵便番号、パスワードなどの入力バリデーション用正規表現の組み立てと検証手順です。
+48. **技術ドキュメント・仕様書Markdown作成ナビ** (`dev-markdown-docs`): 見やすく保守しやすいREADMEやAPI仕様書、アーキテクチャ設計書のMarkdown構成法を解説します。
+49. **Webパフォーマンス・表示速度改善ナビ** (`dev-performance-check`): Webサイトの初期表示が遅い、動作がカクつく原因の特定とLighthouseを活用した改善手順です。
+50. **Webアクセシビリティ（a11y）超入門** (`dev-accessibility-basics`): セマンティックHTMLやキーボード操作、コントラスト比など、誰でも使いやすいWebサイトを作る基礎です。
 
 ---
 
@@ -155,20 +179,22 @@ ai-dev-beginner-navigator/
 │   └── favicon.svg            # ファビコンアセット
 ├── src/
 │   ├── core/                  # Micro-Core基盤
+│   │   ├── favorites.ts       # お気に入りストア（LocalStorage）
+│   │   ├── feedback.ts        # フィードバックストア（LocalStorage）
 │   │   ├── history.ts         # 履歴ストア（LocalStorage / FIFO 500件）
 │   │   ├── index.ts           # Core一括エクスポート
 │   │   ├── registry.ts        # プラグイン登録・重複検証
 │   │   ├── sanitizer.ts       # 秘匿情報マスク
 │   │   ├── search.ts          # 重み付きスコア検索エンジン
 │   │   └── synonyms.ts        # 初心者語句シノニム辞書
-│   ├── plugins/               # 全30プラグイン実装
-│   │   ├── ai/                # AI系（10プラグイン）
-│   │   ├── dev/               # Dev Support系（4プラグイン）
-│   │   ├── error/             # Error系（5プラグイン）
-│   │   ├── file/              # File系（5プラグイン）
-│   │   ├── git/               # Git/Command系（6プラグイン）
+│   ├── plugins/               # 全50プラグイン実装
+│   │   ├── ai/                # AI連携系（13プラグイン）
+│   │   ├── dev/               # Dev Support系（12プラグイン）
+│   │   ├── error/             # Error系（7プラグイン）
+│   │   ├── file/              # File系（9プラグイン）
+│   │   ├── git/               # Git/Command系（9プラグイン）
 │   │   └── index.ts           # プラグイン一括登録・集計
-│   ├── types/                 # 厳格なTypeScript型定義
+│   ├── types/                 # TypeScript型定義
 │   │   ├── history.ts         # 履歴・ストレージ型
 │   │   ├── index.ts           # 型定義一括エクスポート
 │   │   ├── plugin.ts          # プラグイン・メタデータ・ステップ型
@@ -176,23 +202,22 @@ ai-dev-beginner-navigator/
 │   ├── ui/                    # UIコンポーネント & スタイル
 │   │   ├── components/        # 検索バー、カテゴリタブ、解決ビュー等
 │   │   ├── styles/            # ミニマル・ダークUIデザインシステム
-│   │   ├── utils/             # Toast通知等のUIユーティリティ
+│   │   ├── utils/             # HTMLエスケープ・Toast通知ユーティリティ
+│   │   ├── index.ts           # UIコンポーネント一括エクスポート
 │   │   └── router.ts          # ハッシュルーター（#/、#/plugin/:id）
 │   └── main.ts                # エントリーポイント & 初期化ブートストラップ
-├── tests/                     # 自動テストスイート
-│   ├── audit.test.ts          # 仕様書第19章完成条件（全15項目）自動監査
-│   ├── core.test.ts           # Core基盤単体テスト
-│   └── plugins.test.ts        # 全30プラグイン構造・初心者フレーズ検索テスト
-├── index.html                 # メインHTML
+├── .gitattributes             # 改行コード属性設定
+├── .gitignore                 # Git除外設定
+├── AI開発初心者ナビ_デモ.gif   # デモアニメーションGIF
+├── index.html                 # メインHTML（フッター含む）
 ├── LICENSE                    # MIT License
+├── package-lock.json          # 依存関係ロックファイル
 ├── package.json               # プロジェクト定義 & スクリプト
+├── README.md                  # 本ドキュメント
 ├── tsconfig.json              # TypeScript Strict Mode 設定
 ├── vite.config.ts             # Viteビルド設定
-├── ツール起動.bat              # Windows用ワンクリック簡単起動バッチ
-├── 仕様書.md                  # 仕様書 (Ver 1.0.0 確定版)
-├── 実装計画書.md              # 全体実装計画書
-├── RECORD.md                  # 開発記録・決定事項ログ
-└── README.md                  # 本ドキュメント
+├── vite.test.config.ts        # テスト用Viteビルド設定
+└── ツール起動.bat              # Windows用起動バッチ
 ```
 
 ---
@@ -203,8 +228,8 @@ ai-dev-beginner-navigator/
 * Node.js: 20.x / 22.x 推奨
 * npm: 10.x 以上
 
-### 簡単起動（Windows）
-プロジェクト直下の **`ツール起動.bat`** をダブルクリックするだけで、初回依存パッケージのインストールからブラウザの自動起動まで自動的に実行されます。
+### Windows からの起動
+プロジェクト直下の **`ツール起動.bat`** をダブルクリックすると、初回依存パッケージのインストールから開発サーバー・ブラウザ起動まで順に実行されます。
 
 ### コマンドラインからの起動手順
 
@@ -225,53 +250,26 @@ npm run dev
 ```
 起動後、ブラウザで `http://localhost:3000` にアクセスしてください。
 
-### 4. 自動テストの実行
-```bash
-npm test
-```
-Core基盤テスト、全30プラグイン構造テスト、および仕様書第19章（完成条件チェックリスト15項目）の監査テストが実行されます。
-
-### 5. 本番ビルド
+#### 4. 本番ビルド
 ```bash
 npm run build
 ```
-型チェック（`tsc`）が行われた後、`dist/` ディレクトリに最適化された静的ファイル群が出力されます。
+型チェック（`tsc`）が行われた後、`dist/` ディレクトリに静的ファイル群が出力されます。
+
+> ※ テストコードは公開リポジトリには含めず、開発環境側で管理・実行しています。
 
 ---
 
 ## プライバシー & セキュリティ方針
 
-* **外部通信ゼロ**: ユーザーが入力したキーワード、閲覧履歴、生成したプロンプトはブラウザ内部（LocalStorage）でのみ保持され、外部サーバーへ送信されることは一切ありません。
-* **破壊的操作の抑止**: `rm -rf` や `git reset --hard` 等の危険コマンドをアプリから自動実行する仕組みは存在せず、安全な代替手順や確認手順のみを提示します。
-* **秘匿情報サニタイズ**: APIキー（OpenAI, GitHub, AWS, 秘密鍵等）が誤って入力・コピーされるのを防ぐため、自動検出および `[REDACTED]` 置換機能が動作します。
+* **入力データの外部送信なし**: ユーザーが入力したキーワード、閲覧履歴、お気に入り・評価、生成したプロンプトはブラウザ内部（LocalStorage）でのみ保持され、外部サーバーへ送信されません（表示フォントのみ Google Fonts CDN から取得します）。
+* **破壊的操作の抑止**: `rm -rf` や `git reset --hard` 等の危険を伴うコマンドをアプリから自動実行する仕組みは存在せず、確認手順や代替手順のみを提示します。
+* **秘匿情報サニタイズ**: APIキー（OpenAI, GitHub, AWS, 秘密鍵等）のパターンが誤って入力・コピーされるリスクを減らすため、検出および `[REDACTED]` 置換機能が動作します。
 
 ---
 
 ## ライセンス
 
-本ソフトウェアは [MIT License](LICENSE) のもとで公開されています。
+MIT License です。詳細は [LICENSE](LICENSE) を参照してください。
 
-```text
-MIT License
-
-Copyright (c) 2026 tk030-lotto
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
+© 2026 Zero Dev (tk030)

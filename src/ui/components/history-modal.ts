@@ -5,19 +5,7 @@
 
 import { HistoryStorageInterface, ActivityLog } from '../../types';
 import { showToast } from '../utils/toast';
-
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>'"]/g, (character) => {
-    const entities: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;',
-    };
-    return entities[character];
-  });
-}
+import { escapeHtml } from '../utils/html';
 
 export interface HistoryModalProps {
   historyStore: HistoryStorageInterface;
@@ -159,7 +147,7 @@ export function createHistoryModal(props: HistoryModalProps): {
           </div>
           <div class="history-item-title">${safeInfo.title}</div>
         </div>
-        <button class="history-delete-btn" data-id="${log.id}" title="この履歴を削除">
+        <button class="history-delete-btn" data-id="${safeInfo.id}" title="この履歴を削除">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -193,13 +181,43 @@ export function createHistoryModal(props: HistoryModalProps): {
     bodyEl.appendChild(timeline);
   };
 
-  // 全消去
-  clearBtn.addEventListener('click', () => {
-    if (historyStore.getLogs().length === 0) return;
-    if (window.confirm('すべての利用履歴を消去しますか？（元に戻せません）')) {
+  // 全消去用 画面内確認ダイアログ
+  const confirmDialog = document.createElement('dialog');
+  confirmDialog.className = 'confirm-dialog';
+  confirmDialog.setAttribute('aria-labelledby', 'history-confirm-title');
+  confirmDialog.innerHTML = `
+    <div class="confirm-dialog-panel">
+      <div class="modal-header">
+        <h3 class="modal-title" id="history-confirm-title">履歴の全消去</h3>
+      </div>
+      <div class="modal-body">
+        <p class="confirm-dialog-message">すべての利用履歴を消去しますか？（元に戻せません）</p>
+      </div>
+      <form method="dialog" class="modal-footer confirm-dialog-actions">
+        <button type="submit" value="cancel" class="btn btn-secondary btn-sm" autofocus>キャンセル</button>
+        <button type="submit" value="confirm" class="btn btn-danger btn-sm" id="history-confirm-ok-btn">すべて消去</button>
+      </form>
+    </div>
+  `;
+  confirmDialog.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+  confirmDialog.addEventListener('close', () => {
+    const result = confirmDialog.returnValue;
+    confirmDialog.returnValue = '';
+    if (result === 'confirm') {
       historyStore.clearLogs();
       renderHistoryList();
       showToast('すべての履歴を消去しました');
+    }
+  });
+  overlay.appendChild(confirmDialog);
+
+  // 全消去
+  clearBtn.addEventListener('click', () => {
+    if (historyStore.getLogs().length === 0) return;
+    if (!confirmDialog.open) {
+      confirmDialog.showModal();
     }
   });
 

@@ -8,6 +8,7 @@ import { FavoritesStore } from '../../core/favorites';
 import { FeedbackStore } from '../../core/feedback';
 import { createPromptBox } from './prompt-box';
 import { showToast } from '../utils/toast';
+import { escapeHtml } from '../utils/html';
 
 export interface SolutionViewProps {
   plugin: ProblemPlugin;
@@ -55,11 +56,11 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
   headerDiv.className = 'solution-header';
   headerDiv.innerHTML = `
     <div class="solution-meta-row">
-      <span class="card-category-badge badge-${metadata.category}">
-        ${metadata.category.toUpperCase()}
+      <span class="card-category-badge badge-${escapeHtml(metadata.category)}">
+        ${escapeHtml(metadata.category.toUpperCase())}
       </span>
       <span style="font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono);">
-        ${metadata.id}
+        ${escapeHtml(metadata.id)}
       </span>
       ${favoritesStore ? `
         <button type="button" class="btn btn-sm btn-ghost solution-fav-btn ${isFav ? 'fav-active' : ''}" id="solution-fav-btn" style="margin-left: auto; display: inline-flex; align-items: center; gap: 0.35rem;">
@@ -68,8 +69,8 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
         </button>
       ` : ''}
     </div>
-    <h1 class="solution-title">${metadata.name}</h1>
-    <p class="solution-desc">${metadata.description}</p>
+    <h1 class="solution-title">${escapeHtml(metadata.name)}</h1>
+    <p class="solution-desc">${escapeHtml(metadata.description)}</p>
   `;
 
   if (favoritesStore) {
@@ -103,7 +104,7 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
       <span>まず知っておくこと</span>
     </div>
     <p style="font-size: var(--text-sm); line-height: 1.6; color: var(--text-primary);">
-      ${knowledge.summary}
+      ${escapeHtml(knowledge.summary)}
     </p>
   `;
   container.appendChild(section1);
@@ -127,8 +128,8 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
     if (step.command) {
       commandHtml = `
         <div class="command-box">
-          <code class="command-text">${step.command}</code>
-          <button class="command-copy-btn" data-command="${encodeURIComponent(step.command)}" title="コマンドをコピー">
+          <code class="command-text">${escapeHtml(step.command)}</code>
+          <button class="command-copy-btn" data-command="${escapeHtml(encodeURIComponent(step.command))}" title="コマンドをコピー">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -140,10 +141,10 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
     }
 
     stepEl.innerHTML = `
-      <div class="step-indicator">${step.step || idx + 1}</div>
+      <div class="step-indicator">${escapeHtml(String(step.step || idx + 1))}</div>
       <div class="step-body">
-        <h2 class="step-title">${step.title}</h2>
-        <p class="step-desc">${step.detail}</p>
+        <h2 class="step-title">${escapeHtml(step.title)}</h2>
+        <p class="step-desc">${escapeHtml(step.detail)}</p>
         ${commandHtml}
       </div>
     `;
@@ -177,7 +178,7 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
       <div>
         ${knowledge.cautions.map(caution => `
           <div class="caution-box">
-            <p class="caution-text">${caution}</p>
+            <p class="caution-text">${escapeHtml(caution)}</p>
           </div>
         `).join('')}
       </div>
@@ -219,10 +220,10 @@ export function createSolutionView(props: SolutionViewProps): HTMLElement {
       btn.style.padding = '0.75rem';
       btn.innerHTML = `
         <div class="card-top">
-          <span class="card-category-badge badge-${rp.metadata.category}">${rp.metadata.category}</span>
+          <span class="card-category-badge badge-${escapeHtml(rp.metadata.category)}">${escapeHtml(rp.metadata.category)}</span>
         </div>
-        <div class="card-title" style="font-size: var(--text-sm);">${rp.metadata.name}</div>
-        <p class="card-description" style="font-size: var(--text-xs); margin-bottom: 0;">${rp.metadata.description}</p>
+        <div class="card-title" style="font-size: var(--text-sm);">${escapeHtml(rp.metadata.name)}</div>
+        <p class="card-description" style="font-size: var(--text-xs); margin-bottom: 0;">${escapeHtml(rp.metadata.description)}</p>
       `;
       btn.addEventListener('click', () => onSelectPlugin(rp.metadata.id));
       listEl.appendChild(btn);

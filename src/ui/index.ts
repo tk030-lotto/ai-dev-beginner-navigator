@@ -11,3 +11,4 @@ export * from './components/solution-view';
 export * from './components/history-modal';
 export * from './router';
 export * from './utils/toast';
+export * from './utils/html';

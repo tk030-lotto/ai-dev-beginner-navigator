@@ -6,6 +6,7 @@
 import { PromptTemplate } from '../../types';
 import { sanitizeInput } from '../../core/sanitizer';
 import { showToast } from '../utils/toast';
+import { escapeHtml } from '../utils/html';
 
 export interface PromptBoxProps {
   templates: PromptTemplate[];
@@ -19,7 +20,7 @@ export function createPromptBox(props: PromptBoxProps): HTMLElement {
 
   // テンプレート選択肢の生成
   const templateOptionsHtml = templates.map((t, index) => {
-    return `<option value="${index}">[${t.targetAi}] ${t.title}</option>`;
+    return `<option value="${index}">[${escapeHtml(t.targetAi)}] ${escapeHtml(t.title)}</option>`;
   }).join('');
 
   container.innerHTML = `
@@ -182,10 +183,19 @@ export function createPromptBox(props: PromptBoxProps): HTMLElement {
       showToast('プロンプトをクリップボードにコピーしました');
       props.onPromptGenerated?.(textToCopy);
     } catch {
-      previewArea.select();
-      document.execCommand('copy');
-      showToast('プロンプトをコピーしました');
-      props.onPromptGenerated?.(textToCopy);
+      let copied = false;
+      try {
+        previewArea.select();
+        copied = document.execCommand('copy');
+      } catch {
+        copied = false;
+      }
+      if (copied) {
+        showToast('プロンプトをコピーしました');
+        props.onPromptGenerated?.(textToCopy);
+      } else {
+        showToast('コピーできませんでした');
+      }
     }
   });
 

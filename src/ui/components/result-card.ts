@@ -4,6 +4,7 @@
 
 import { SearchResult, CategoryType } from '../../types';
 import { FeedbackStore } from '../../core/feedback';
+import { escapeHtml } from '../utils/html';
 
 export interface ResultCardProps {
   result: SearchResult;
@@ -53,18 +54,18 @@ export function createResultCard(props: ResultCardProps): HTMLElement {
     .slice(0, 4)
     .map((phrase) => {
       const isMatched = matchedBeginnerPhrases?.includes(phrase);
-      return `<span class="phrase-tag ${isMatched ? 'matched' : ''}"># ${phrase}</span>`;
+      return `<span class="phrase-tag ${isMatched ? 'matched' : ''}"># ${escapeHtml(phrase)}</span>`;
     })
     .join('');
 
   card.innerHTML = `
     <div class="card-top">
-      <span class="card-category-badge ${badgeClass}">${categoryLabel}</span>
-      ${matchSummary ? `<span class="card-match-reason">${matchSummary}</span>` : ''}
+      <span class="card-category-badge ${escapeHtml(badgeClass)}">${escapeHtml(categoryLabel)}</span>
+      ${matchSummary ? `<span class="card-match-reason">${escapeHtml(matchSummary)}</span>` : ''}
       ${feedbackBadge}
     </div>
-    <h2 class="card-title">${metadata.name}</h2>
-    <p class="card-description">${metadata.description}</p>
+    <h2 class="card-title">${escapeHtml(metadata.name)}</h2>
+    <p class="card-description">${escapeHtml(metadata.description)}</p>
     <div class="card-phrases-container">
       ${phrasesHtml}
     </div>
